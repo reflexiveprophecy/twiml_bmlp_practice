@@ -1,5 +1,11 @@
 #python3.8.4
 #./venv/bin/python
+"""
+This file serves as a practice for Chapter 3 Data Ingestion
+Make sure you change the /consumer_complaint/config/config.py
+to define your own directories and set your credentials. 
+"""
+
 
 # %%
 import os

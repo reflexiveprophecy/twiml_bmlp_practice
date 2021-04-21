@@ -6,7 +6,6 @@ Make sure you change the /consumer_complaint/config/config.py
 to define your own directories and set your credentials. 
 """
 
-
 # %%
 import os
 import tensorflow as tf
@@ -116,23 +115,24 @@ if __name__ == '__main__':
     context = InteractiveContext(pipeline_root=config.PIPELINE_ROOT)
     
 # %%
-    complaint_df = pd.read_csv(config.FILE_PATH, encoding = 'utf-8')
+    complaint_df = pd.read_csv(config.DATA_FILE_PATH, encoding = 'utf-8')
 
 # %%
     #ImportExampleGen with TFRecord
-    complaint_tfrecord = tfrecord_data_writer(file_path = config.FILE_PATH)
+    complaint_tfrecord = tfrecord_data_writer(file_path = config.DATA_FILE_PATH)
     example_gen = ImportExampleGen(input_base = config.RECORD_DIR_PATH)
     context.run(example_gen)
     
 
 # %%
     #Plain simple csv file for CsvExampleGen
-    example_gen = CsvExampleGen(input_base = config.FILE_DIR_PATH)
+    example_gen = CsvExampleGen(input_base = config.DATA_DIR_PATH)
     context.run(example_gen)
+
 
 # %%
     #Data Split
-    split_example_gen = data_split(file_path = config.FILE_DIR_PATH)
+    split_example_gen = data_split(file_path = config.DATA_SPLITS_DIR_PATH)
     context.run(split_example_gen)
 
 
@@ -144,8 +144,9 @@ if __name__ == '__main__':
 
 # %%
     #Spanning Datasets
-    span_split_example_gen = span_data_split(file_path = config.FILE_DIR_PATH)
+    span_split_example_gen = span_data_split(file_path = config.DATA_SPLITS_DIR_PATH)
     span_split_example_gen
+    
 
 # %%
     #Big Query Data Ingestion

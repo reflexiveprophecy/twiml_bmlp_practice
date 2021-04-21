@@ -9,5 +9,6 @@
 
 #### Full Dataset: https://www.consumerfinance.gov/data-research/consumer-complaints/#download-the-data
 
+#### Please use tfx==0.28.0 for compatibility reasons. 
 
 

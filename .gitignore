@@ -4,6 +4,11 @@ venv/
 .DS_Store
 *.csv
 output/*
+pipeline_root/
+*.tfrecord
+.ipynb_checkpoints/
+tmp/
+*.ipynb
 
 
 # Byte-compiled / optimized / DLL files

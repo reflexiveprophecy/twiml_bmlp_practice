@@ -8,7 +8,6 @@ from pandas.io import gbq
 from consumer_complaint.config import config
 
 # %%
-
 class BigQueryConnection:
     def __init__(self, project_id):
         os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = config.GOOGLE_CREDENTIAL_PATH

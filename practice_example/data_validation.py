@@ -16,6 +16,9 @@ from tfx.orchestration.experimental.interactive.interactive_context import Inter
 
 # %%
 def csv_statistics_generator(file_path):
+    """
+    Generate statistics for the csv dataset
+    """
     csv_stats = tfdv.generate_statistics_from_csv(data_location = file_path,
                                                 delimiter=',')
     csv_schema = tfdv.infer_schema(csv_stats)
@@ -24,6 +27,9 @@ def csv_statistics_generator(file_path):
 
 # %%
 def tfrecord_statis_generator(file_path):
+    """
+    Generate statistics for the tfrecord dataset
+    """
     tfrecord_stats = tfdv.generate_statistics_from_tfrecord(data_location = file_path)
     tfrecord_schema = tfdv.infer_schema(tfrecord_stats)
     tfdv.display_schema(tfrecord_schema)
@@ -31,6 +37,9 @@ def tfrecord_statis_generator(file_path):
 
 # %%
 def train_val_split(file_path, shuffle_split = True):
+    """
+    Train test split from sklearn function
+    """    
     data = pd.read_csv(file_path, encoding = 'utf-8')
     if shuffle_split:
         train_data, val_data = train_test_split(data, test_size = 0.1, 
@@ -46,15 +55,19 @@ def train_val_split(file_path, shuffle_split = True):
 
 # %%
 def csv_statistics_validator(stats, schema):
+    """
+    Validate statistics from a csv dataset
+    """
     stats_anomalies = tfdv.validate_statistics(statistics = stats, schema = schema)
     tfdv.display_anomalies(stats_anomalies)
     return stats_anomalies
 
 # %%
 def tfdv_skew_validator(feature_name, train_stats, serve_stats, schema, threshold):
+    """
+    Validate skew for the csv dataset
+    """
     #this doesn't display skew anomalies as the book shows
-
-
     tfdv.get_feature(schema, feature_name).skew_comparator.infinity_norm.threshold = threshold
     skew_anomalies = tfdv.validate_statistics(statistics = train_stats,
                                                 schema = schema,
@@ -63,6 +76,9 @@ def tfdv_skew_validator(feature_name, train_stats, serve_stats, schema, threshol
     return skew_anomalies
 
 def tfdv_drift_validator(feature_name, train_stats, previous_stats, schema, threshold):
+    """
+    Validate drift for the csv dataset
+    """
     #this doesn't display drift anomalies as the book shows
     tfdv.get_feature(schema, feature_name).drift_comparator.infinity_norm.threshold = threshold
     drift_anomalies = tfdv.validate_statistics(statistics=train_stats, 
@@ -110,21 +126,13 @@ if __name__ == '__main__':
 # %%
     #The components so far put together:
     example_gen = example_gen = CsvExampleGen(input_base = config.DATA_DIR_PATH)
-    context.run(example_gen)
     statistics_gen = StatisticsGen(examples = example_gen.outputs['examples'])
-    context.run(statistics_gen)
     schema_gen = SchemaGen(statistics = statistics_gen.outputs['statistics'],
                             infer_feature_shape = True)
-    context.run(schema_gen)
     example_validator = ExampleValidator(statistics = statistics_gen.outputs['statistics'],
                                         schema = schema_gen.outputs['schema'])
-    context.run(example_validator)
-
 
 # %%
-
-
-
 
 
 

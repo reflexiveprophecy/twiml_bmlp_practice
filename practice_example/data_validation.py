@@ -7,6 +7,7 @@ import os
 from consumer_complaint.config import config
 import tensorflow_data_validation as tfdv 
 from sklearn.model_selection import train_test_split
+from tfx.orchestration import pipeline
 from tfx.components import CsvExampleGen, \
                             StatisticsGen, \
                             SchemaGen, \
@@ -24,6 +25,7 @@ def csv_statistics_generator(file_path):
     csv_schema = tfdv.infer_schema(csv_stats)
     tfdv.display_schema(csv_schema)
     return csv_stats, csv_schema
+
 
 # %%
 def tfrecord_statis_generator(file_path):
@@ -122,17 +124,6 @@ if __name__ == '__main__':
                                             schema = train_schema,
                                             threshold = 0.01
                                             )
-
-# %%
-    #The components so far put together:
-    example_gen = example_gen = CsvExampleGen(input_base = config.DATA_DIR_PATH)
-    statistics_gen = StatisticsGen(examples = example_gen.outputs['examples'])
-    schema_gen = SchemaGen(statistics = statistics_gen.outputs['statistics'],
-                            infer_feature_shape = True)
-    example_validator = ExampleValidator(statistics = statistics_gen.outputs['statistics'],
-                                        schema = schema_gen.outputs['schema'])
-
-# %%
 
 
 

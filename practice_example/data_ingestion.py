@@ -155,9 +155,7 @@ if __name__ == '__main__':
     FROM `consumer-complaint-310721.consumer_complaint.consumer_complaint_data` 
     LIMIT 100
     """
-
     bigquery_example_gen = BigQueryExampleGen(query = query)
-
     context.run(bigquery_example_gen, beam_pipeline_args=["--project={}".format(config.GCP_PROJECT_ID), 
                                                         "--temp_location={}".format(config.TEMP_GCS_LOCATION)])
 

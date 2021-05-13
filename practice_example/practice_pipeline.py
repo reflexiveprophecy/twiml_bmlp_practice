@@ -152,21 +152,15 @@ if __name__ == "__main__":
                                 config.MODULE_FILE_PATH,
                                 config.SERVING_MODEL_DIR,
                                 )
+# %%
+    tfx_pipeline = init_pipeline(tfx_components, config.PIPELINE_ROOT, 4)
+    
 
 
 # %%
-    tfx_pipeline = init_pipeline(tfx_components, config.PIPELINE_ROOT, 0)
-
-
-
-# %%
+    #the pipeline doesn't work in ipykernel, so you would have to run 
+    # this in terminal 
     local_dag_runner.LocalDagRunner().run(tfx_pipeline)
-
-
-
-# %%
-
-
 
 
 

@@ -39,7 +39,4 @@ GOOGLE_CREDENTIAL_PATH = os.path.join(PROJECT_DIR, 'credentials', GOOGLE_APPLICA
 PRACTICE_EXAMPLE_DIR_PATH = os.path.join(ROOT_DIR, 'practice_example')
 MODULE_FILE_PATH = os.path.join(PRACTICE_EXAMPLE_DIR_PATH, 'module.py')
 
-#Training Parameters
-TRAIN_STEPS = 50000
-EVAL_STEPS = 10000
 

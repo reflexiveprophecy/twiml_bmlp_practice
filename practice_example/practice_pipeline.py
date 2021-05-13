@@ -1,6 +1,7 @@
 #python 3.8.4 
 
 # %%
+import os
 from typing import Text
 import tensorflow_model_analysis as tfma
 from tfx.components import (
@@ -14,6 +15,10 @@ from tfx.components import (
     Trainer,
     Transform,
 )
+
+from tfx.orchestration.local import local_dag_runner
+from tfx.extensions.google_cloud_ai_platform.trainer import executor \
+        as aip_trainer_executor
 from consumer_complaint.config import config
 from tfx.components.base import executor_spec
 from tfx.components.trainer.executor import GenericExecutor
@@ -26,9 +31,13 @@ from tfx.orchestration import metadata, pipeline
 
 
 # %%
-def init_components(data_dir, module_file, training_steps=config.TRAIN_STEPS,
-                    eval_steps=config.EVAL_STEPS, serving_model_dir=None,
-                    ai_platform_training_args=None, ai_platform_serving_args=None):
+def init_components(data_dir, module_file,
+                    serving_model_dir=None,
+                    ai_platform_training_args=None,
+                    ai_platform_serving_args=None,
+                    training_steps = 50000,
+                    eval_steps = 10000):
+
     """
     This function is to initialize tfx components
     """
@@ -70,6 +79,39 @@ def init_components(data_dir, module_file, training_steps=config.TRAIN_STEPS,
         module_file=module_file,
     )
 
+    training_kwargs = {
+        "module_file": module_file,
+        "examples": transform.outputs["transformed_examples"],
+        "schema": schema_gen.outputs["schema"],
+        "transform_graph": transform.outputs['transform_graph'],
+        "train_args": trainer_pb2.TrainArgs(num_steps = training_steps),
+        "eval_args": trainer_pb2.EvalArgs(num_steps = eval_steps),
+    }
+
+
+    if ai_platform_training_args:
+
+        training_kwargs.update(
+            {
+                "custom_executor_spec": executor_spec.ExecutorClassSpec(
+                    aip_trainer_executor.GenericExecutor
+                ),
+                "custom_config": {
+                    aip_trainer_executor.TRAINING_ARGS_KEY: ai_platform_training_args  # noqa
+                },
+            }
+        )
+    else:
+        training_kwargs.update(
+            {
+                "custom_executor_spec": executor_spec.ExecutorClassSpec(
+                    GenericExecutor
+                )
+            }
+        )
+
+    trainer = Trainer(**training_kwargs)
+    
     #compile all components in a list
     components = [
         example_gen,
@@ -77,9 +119,9 @@ def init_components(data_dir, module_file, training_steps=config.TRAIN_STEPS,
         schema_gen,
         example_validator,
         transform,
+        trainer,
     ]
     return components
-
 
 
 # %%
@@ -106,14 +148,26 @@ def init_pipeline(components,
 
 # %%
 if __name__ == "__main__":
-    tfx_components = init_components(
-                                config.DATA_DIR_PATH,
+    tfx_components = init_components(config.DATA_DIR_PATH,
                                 config.MODULE_FILE_PATH,
                                 config.SERVING_MODEL_DIR,
                                 )
 
+
 # %%
     tfx_pipeline = init_pipeline(tfx_components, config.PIPELINE_ROOT, 0)
+
+
+
+# %%
+    local_dag_runner.LocalDagRunner().run(tfx_pipeline)
+
+
+
+# %%
+
+
+
 
 
 

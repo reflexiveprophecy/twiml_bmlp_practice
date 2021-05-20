@@ -26,7 +26,7 @@ PIPELINE_NAME = "consumer_complaint_pipeline"
 METADATA_PATH = os.path.join(PIPELINE_ROOT, "metadata.sqlite")
 
 #Model Directory
-SERVING_MODEL_DIR = os.path.join(PIPELINE_ROOT, "serving_model", PIPELINE_NAME)
+SERVING_MODEL_DIR = os.path.join(PIPELINE_ROOT, "Serving_Model", PIPELINE_NAME)
 
 #GOOGLE BIG QUERY
 GCP_PROJECT_ID = 'consumer-complaint-310721'

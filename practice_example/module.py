@@ -31,6 +31,7 @@ TEXT_FEATURES = {"consumer_complaint_narrative": None}
 
 os.environ["TFHUB_CACHE_DIR"] = 'tmp/tfhub'
 
+
 def transformed_name(key: str) -> str:
     return key + "_xf"
 
@@ -192,6 +193,7 @@ def get_model(show_summary: bool = True) -> tf.keras.models.Model:
         metrics=[
             tf.keras.metrics.BinaryAccuracy(),
             tf.keras.metrics.TruePositives(),
+            tf.keras.metrics.AUC(), #adding the AUC metric to the book repo's code
         ],
     )
     if show_summary:
